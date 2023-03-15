@@ -1,0 +1,4 @@
+colorcet==3.0.1
+folium==0.14.0
+geopy==2.3.0
+pandas==1.5.3
