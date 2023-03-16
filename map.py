@@ -3,7 +3,13 @@ from folium.plugins import MarkerCluster, FeatureGroupSubGroup
 import pandas as pd
 import urllib.request
 from os.path import exists
+from os import makedirs
 import colorcet
+
+
+# Create image folder if not present
+if not exists('img'):
+    makedirs('img')
 
 
 # Read in the data
