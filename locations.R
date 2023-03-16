@@ -12,31 +12,25 @@ library(magrittr)
 library(tidygeocoder)
 
 
-# Read in Airtable exported data
+# Read in Airtable exported data and get location strings
 new = fread("Harmony Day - Interactive Map-MASTER LIST.csv", header = TRUE)
-
-
-# Gather all location strings (any with Location
-# in colname)
 new_location_cols <- grep("Location", names(new))
 new_location_strings <- new[, ..new_location_cols] %>%
   unlist %>%
   as.character %>%
   .[. != ""] %>%
   .[!is.na(.)] %>%
-  unique
+  unique %>%
+  trimws
 
 
-
-# Convert to data table and key
+# Convert to data table and key for merge
 new_locations <- data.table(loc_string = new_location_strings)
-
-# Trim whitespace (Why Airtable why?!!)
-new_locations[, loc_string := trimws(loc_string)]
-
 setkey(new_locations, loc_string)
 
-# Read in full edited locations list
+
+# Read in full edited locations list or create
+# empty table if never been run
 if (file.exists("locations.tsv")) {
   curr_locations <- fread("locations.tsv")
 } else {
@@ -49,15 +43,19 @@ if (file.exists("locations.tsv")) {
 }
 setkey(curr_locations, loc_string)
 
+
 # Merge
 merged_locations <- curr_locations[new_locations]
+
 
 # Query missing locations
 merged_locations[is.na(lat_query), c("lat_query", "lon_query") := geo(address = loc_string,
                                                                       method = "osm")[, 2:3]]
 
+
 # Remove duplicate rows (shouldn't be any)
 merged_locations <- unique(merged_locations, by = "loc_string")
+
 
 # Write to file
 fwrite(merged_locations, "locations.tsv", sep = "\t")
