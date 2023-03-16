@@ -2,12 +2,13 @@
 
 ## Installation
 
+```
 python3 -m venv venv
 source venv/bin/activate
 python3 -m pip install -r requirements.txt
 
 Rscript -e 'install.packages(c("data.table", "magrittr", "tidygeocoder"), repos="https://cloud.r-project.org")'
-
+```
 
 ## Steps
 - Download Harmony Airtable data file to directory, leave name as is.
