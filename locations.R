@@ -27,8 +27,13 @@ new_location_strings <- new[, ..new_location_cols] %>%
   unique
 
 
+
 # Convert to data table and key
 new_locations <- data.table(loc_string = new_location_strings)
+
+# Trim whitespace (Why Airtable why?!!)
+new_locations[, loc_string := trimws(loc_string)]
+
 setkey(new_locations, loc_string)
 
 # Read in full edited locations list
